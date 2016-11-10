@@ -1,6 +1,22 @@
+html,body,#root,#app,#body{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+#app{
+overflow: hidden;
+font-style: italic;
+}
+#app:focus{
+  outline: none;
+}
+#board{
+  overflow: hidden;
+}
 .cell{
   height: 30px;
   width: 30px;
-  position: absolute;
+  position: absolute;;
   top:0px;
+  float: left;
 }
