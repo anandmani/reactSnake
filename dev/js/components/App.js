@@ -1,16 +1,18 @@
-import React from 'react';
-import UserList from '../containers/user-list';
-import UserDetails from '../containers/user-detail';
-require('../../scss/style.scss');
+import React, {Component} from 'react';
+import Board from './Board';
+require('../../css/stylesheet.css');
 
-const App = () => (
-    <div>
-        <h2>User List</h2>
-        <UserList />
-        <hr />
-        <h2>User Details</h2>
-        <UserDetails />
-    </div>
-);
+class App extends Component{
+
+
+  render(){
+    var n = prompt("NxN Board. Enter N ");
+    n = Number(n);
+    return(
+      <Board n={n}/>
+    );
+  }
+}
+
 
 export default App;
