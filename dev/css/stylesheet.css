@@ -5,18 +5,19 @@ html,body,#root,#app,#body{
 }
 #app{
 overflow: hidden;
-font-style: italic;
 }
 #app:focus{
   outline: none;
 }
 #board{
-  overflow: hidden;
+  overflow:hidden;
+  display: block;
 }
 .cell{
   height: 30px;
   width: 30px;
-  position: absolute;;
+  position: relative;
   top:0px;
-  float: left;
+  display: inline-block;
+  color: white;
 }

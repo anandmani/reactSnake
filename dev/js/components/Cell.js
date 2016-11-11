@@ -5,7 +5,7 @@ class Cell extends Component{
     var clr;
     switch(this.props.cellObj.value){
       case 0:
-        clr = "grey";
+        clr = "black";
       break;
       case 1:
         clr = "green";
@@ -18,8 +18,8 @@ class Cell extends Component{
       break;
     }
     return(
-        <div className="cell" style={{top: 30*this.props.cellObj.row, left: 30*this.props.cellObj.col, backgroundColor: clr}}>{this.props.cellObj.row},{this.props.cellObj.col}</div>
-        // <div className="cell" style={{top: 30*this.props.cellObj.row, left: 30*this.props.cellObj.col, backgroundColor: clr}}></div>
+         <div className="cell" style={{ backgroundColor: clr}}>{this.props.cellObj.row},{this.props.cellObj.col}</div>
+        // <div className="cell" style={{backgroundColor: clr}}></div>
     );
 
   }
