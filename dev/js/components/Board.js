@@ -91,7 +91,7 @@ class Board extends Component{
 
    render(){
         return(
-          <div id="board" style={{height:`${30*this.props.n}px`, width:`${30*this.props.n}px`}}>
+          <div id="board" style={{height:`${30*this.props.n}px`, width:`${30*this.props.n}px`, left:`-${this.props.n*30/2}px`}}>
             {this.state.cellsArray.map(this.getRows)}
 
           </div>

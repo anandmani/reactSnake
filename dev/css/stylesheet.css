@@ -9,6 +9,7 @@ overflow: hidden;
 #app:focus{
   outline: none;
 }
+
 #buttonRestart{
   display: inline-block;
 }
@@ -18,6 +19,8 @@ overflow: hidden;
 #board{
   overflow:hidden;
   display: block;
+  position: relative;
+  margin-left: 50%;
   font-size: 0;
   background-color: black;
 }

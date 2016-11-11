@@ -146,9 +146,12 @@ gameloop(){
    this.gameloop();
  }
 
+  componentDidMount(){
+    this.refs.app.focus(); 
+  }
   render(){
     return(
-      <div id="app" tabIndex="1" onKeyDown={this.handleKeyPress}>
+      <div id="app" ref="app" tabIndex="0" onKeyDown={this.handleKeyPress}>
         <button id="buttonRestart">Restart</button>
         <div id="score">Score: {this.state.score}</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
