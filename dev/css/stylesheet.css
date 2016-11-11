@@ -9,9 +9,17 @@ overflow: hidden;
 #app:focus{
   outline: none;
 }
+#buttonRestart{
+  display: inline-block;
+}
+#score{
+  display: inline-block;
+}
 #board{
   overflow:hidden;
   display: block;
+  font-size: 0;
+  background-color: black;
 }
 .cell{
   height: 30px;
@@ -19,5 +27,5 @@ overflow: hidden;
   position: relative;
   top:0px;
   display: inline-block;
-  color: white;
+  color: none;
 }

@@ -17,10 +17,16 @@ class Cell extends Component{
         console.log("Invalid value for cell "+this.props.cellObj.row+","+this.props.cellObj.col);
       break;
     }
-    return(
-         <div className="cell" style={{ backgroundColor: clr}}>{this.props.cellObj.row},{this.props.cellObj.col}</div>
-        // <div className="cell" style={{backgroundColor: clr}}></div>
-    );
+    if(clr == "red"){
+      return(
+           <div className="cell" style={{ backgroundColor: clr, borderRadius: "50%"}}>{"-"}</div>
+      );
+    }
+    else{
+      return(
+           <div className="cell" style={{ backgroundColor: clr}}>{"-"}</div>
+      );
+    }
 
   }
 }
