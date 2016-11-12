@@ -183,7 +183,7 @@ gameloop(){
   resetGame(){
     console.log("reseting game");
     snakeHash=[]
-    this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{row:10, col:10}, score: 2, gameOver:false});
+    this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver:false});
     startTime = moment();
     snakeHash["0,0"]= true;
     snakeHash["0,1"]= true;
