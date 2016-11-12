@@ -32,3 +32,12 @@ overflow: hidden;
   display: inline-block;
   color: none;
 }
+#gameOver {
+    position: fixed;
+    margin-left: 50%;
+    top: 50%;
+    color: white;
+    width: 200px;
+    left: -100px;
+    font-size: 40px;
+}

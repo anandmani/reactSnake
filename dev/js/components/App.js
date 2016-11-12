@@ -13,7 +13,7 @@ class App extends Component{
     this.gameloop = this.gameloop.bind(this);
     this.spawnFood = this.spawnFood.bind(this);
     this.resetGame = this.resetGame.bind(this);
-    this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 2};
+    this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver: false};
   }
 
   //Adding state buttonPressed because, when snake is moving down, we press right,up fast within one game loop duration, then snake moves up from down. Because there was an intermediate right pressed. To avoid this, we accept only one input per game loop duration.
@@ -119,11 +119,13 @@ moveSnake(){
     //Check for collisions with snake body
     if(snakeHash[`${head.row},${head.col}`]==true){
       console.log('Collision with snake body!');
+      this.setState({gameOver: true});
       throw new Error('Collision with snake body!');
     }
     //Check for collisions with boundary
     if(head.row < 0 || head.row >= this.state.n || head.col < 0 || head.col >= this.state.n){
       console.log('Collision with boundary!');
+      this.setState({gameOver: true});
       throw new Error('Collision with boundary!');
     }
     //Updating Snake with new head
@@ -178,7 +180,7 @@ gameloop(){
   resetGame(){
     console.log("reseting game");
     snakeHash=[]
-    this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{row:10, col:10}, score: 2});
+    this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{row:10, col:10}, score: 2, gameOver:false});
     snakeHash["0,0"]= true;
     snakeHash["0,1"]= true;
     this.gameloop();
@@ -195,6 +197,7 @@ gameloop(){
         <button id="buttonRestart" onClick={this.resetGame}>Restart</button>
         <div id="score">Score: {this.state.score}</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
+        <div id="gameOver" style={{display:(this.state.gameOver)?"block":"none"}}>Game Over</div>
       </div>
     );
   }
