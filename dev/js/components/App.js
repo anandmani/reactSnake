@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import Board from './Board';
 require('../../css/stylesheet.css');
+var moment = require('moment');
 
 var snakeHash = [];
+var startTime = moment();
 
 class App extends Component{
 
@@ -172,6 +174,7 @@ gameloop(){
   componentDidMount(){
     console.log("inside component did mount");
     this.refs.app.focus();
+    startTime = moment();
     for(var i=0; i<this.state.snakeQueue.length; i++){
       snakeHash[`${this.state.snakeQueue[i].row},${this.state.snakeQueue[i].col}`]=true;
     }
@@ -181,6 +184,7 @@ gameloop(){
     console.log("reseting game");
     snakeHash=[]
     this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{row:10, col:10}, score: 2, gameOver:false});
+    startTime = moment();
     snakeHash["0,0"]= true;
     snakeHash["0,1"]= true;
     this.gameloop();
@@ -188,6 +192,7 @@ gameloop(){
   }
 
   render(){
+    var d = moment(); //We store time the game started in  App scope var startTime. Then, in render, everytime we get current time and show diff of current time and start time!
     console.log("snake queue");
     console.log(this.state.snakeQueue);
     console.log("snake hash");
@@ -196,6 +201,7 @@ gameloop(){
       <div id="app" ref="app" tabIndex="0" onKeyDown={this.handleKeyPress}>
         <button id="buttonRestart" onClick={this.resetGame}>Restart</button>
         <div id="score">Score: {this.state.score}</div>
+        <div id="timer">{d.diff(startTime, 'seconds')}.{d.diff(startTime, 'milliseconds')%1000}sec</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
         <div id="gameOver" style={{display:(this.state.gameOver)?"block":"none"}}>Game Over</div>
       </div>
