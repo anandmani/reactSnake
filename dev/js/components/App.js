@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Board from './Board';
 require('../../css/stylesheet.css');
 
+var snakeHash = [];
 
 class App extends Component{
 
@@ -11,11 +12,13 @@ class App extends Component{
     this.moveSnake = this.moveSnake.bind(this);
     this.gameloop = this.gameloop.bind(this);
     this.spawnFood = this.spawnFood.bind(this);
-    this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 0};
+    this.resetGame = this.resetGame.bind(this);
+    this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 2};
   }
 
   //Adding state buttonPressed because, when snake is moving down, we press right,up fast within one game loop duration, then snake moves up from down. Because there was an intermediate right pressed. To avoid this, we accept only one input per game loop duration.
  handleKeyPress(event){
+   event.preventDefault();//Because in firefox up, down, left, right scroll in the window
    switch(event.keyCode){
      case 87:
         if(this.state.direction!= "down" && this.state.buttonPressed == false){
@@ -82,13 +85,13 @@ moveSnake(){
       tempSnakeQueue[i] = Object.assign({},  tempSnakeQueue[i]);
     }
     var head = Object.assign({},tempSnakeQueue[tempSnakeQueue.length-1]);
-    console.log(this.state.snakeQueue);
 
     if(head.row == this.state.food.row && head.col == this.state.food.col){
       this.setState({score: this.state.score+1, foodPresent: false});
     }
     else {
-        tempSnakeQueue.shift(); //Removing last element of queue
+        var exTail = tempSnakeQueue.shift(); //Removing last element of queue
+        snakeHash[`${exTail.row},${exTail.col}`]=false;//Updating snake hash as well
     }
 
 
@@ -113,13 +116,31 @@ moveSnake(){
       break;
 
     }
+    //Check for collisions with snake body
+    if(snakeHash[`${head.row},${head.col}`]==true){
+      console.log('Collision with snake body!');
+      throw new Error('Collision with snake body!');
+    }
+    //Check for collisions with boundary
+    if(head.row < 0 || head.row >= this.state.n || head.col < 0 || head.col >= this.state.n){
+      console.log('Collision with boundary!');
+      throw new Error('Collision with boundary!');
+    }
+    //Updating Snake with new head
     tempSnakeQueue.push(head);
+    snakeHash[`${head.row},${head.col}`]=true;//Updating snake hash as well
     this.setState({snakeQueue: tempSnakeQueue});
 }
 
 spawnFood(){
     var foodRow = Math.floor((Math.random() * this.state.n)); //Random number between 0 and n-1
     var foodCol = Math.floor((Math.random() * this.state.n)); //Random number between 0 and n-1
+    //Checking if snake is present at random location generated
+    while(snakeHash[`${foodRow},${foodCol}`]==true){
+      console.log("Snake present at random location generated for food. Generating new location");
+      foodRow = Math.floor((Math.random() * this.state.n));
+      foodCol = Math.floor((Math.random() * this.state.n));
+    }
     console.log("Spawning food at "+foodRow+","+foodCol);
     this.setState({food: {row:foodRow, col:foodCol}, foodPresent: true});
 }
@@ -147,12 +168,31 @@ gameloop(){
  }
 
   componentDidMount(){
-    this.refs.app.focus(); 
+    console.log("inside component did mount");
+    this.refs.app.focus();
+    for(var i=0; i<this.state.snakeQueue.length; i++){
+      snakeHash[`${this.state.snakeQueue[i].row},${this.state.snakeQueue[i].col}`]=true;
+    }
   }
+
+  resetGame(){
+    console.log("reseting game");
+    snakeHash=[]
+    this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{row:10, col:10}, score: 2});
+    snakeHash["0,0"]= true;
+    snakeHash["0,1"]= true;
+    this.gameloop();
+
+  }
+
   render(){
+    console.log("snake queue");
+    console.log(this.state.snakeQueue);
+    console.log("snake hash");
+    console.log(snakeHash);//this is kinda conk as console.log prints final state of snakeHash (reference)
     return(
       <div id="app" ref="app" tabIndex="0" onKeyDown={this.handleKeyPress}>
-        <button id="buttonRestart">Restart</button>
+        <button id="buttonRestart" onClick={this.resetGame}>Restart</button>
         <div id="score">Score: {this.state.score}</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
       </div>

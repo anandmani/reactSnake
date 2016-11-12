@@ -66,7 +66,9 @@ class Board extends Component{
     //  this.state.cellsArray[row][col].value = value;
     //  this.setState({cellsArray: this.state.cellsArray})
     //Note: cellsArray is an Array. We cant copy it with = as it is copied by reference. Thus we need to use spread. But, cellsArray is a 2D array. Therefore, spread alone is not enough as the rowArrays inside wll be copied by reference.
-
+    console.log("inside board");
+    // console.log(this.state.cellsArray);
+    console.log(this.props.snakeQueue);
      var tempCellsArray = [...this.state.cellsArray];
      for(var i =0; i< tempCellsArray.length; i++){
          tempCellsArray[i] = tempCellsArray[i].slice();
@@ -81,7 +83,7 @@ class Board extends Component{
 
      this.props.snakeQueue.map(function(snakeCell,index){       //Rendering snake after food so that snake goes on top of food
       //  console.log("snake in "+snakeCell.row+","+snakeCell.col);
-       tempCellsArray[snakeCell.row][snakeCell.col].value = 1;
+       tempCellsArray[snakeCell.row][snakeCell.col].value = 1;   //When collision with boundary happens. this is where Error is thrown as there is no '.value' defined.
      })
 
 
@@ -90,6 +92,7 @@ class Board extends Component{
    }
 
    render(){
+        console.log("rendering board");
         return(
           <div id="board" style={{height:`${30*this.props.n}px`, width:`${30*this.props.n}px`, left:`-${this.props.n*30/2}px`}}>
             {this.state.cellsArray.map(this.getRows)}
