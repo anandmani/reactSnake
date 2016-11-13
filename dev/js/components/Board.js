@@ -36,30 +36,6 @@ class Board extends Component{
       return rowArray.map(this.drawCell);
    }
 
-  //  componentWillMount(){
-  //    //Copying cellsArray to tempCellsArray by value (not by reference) because state should be immutable
-  //    //we cant directly  this.state.cellsArray[row][col].value = value; as this does not trigger a state change. Hence we do this.setState!
-  //   //  this.state.cellsArray[row][col].value = value;
-  //   //  this.setState({cellsArray: this.state.cellsArray})
-  //   //Note: cellsArray is an Array. We cant copy it with = as it is copied by reference. Thus we need to use spread. But, cellsArray is a 2D array. Therefore, spread alone is not enough as the rowArrays inside wll be copied by reference.
-   //
-  //    console.log(".......");
-  //    var tempCellsArray = [...this.state.cellsArray];
-  //    for(var i =0; i< tempCellsArray.length; i++){
-  //        tempCellsArray[i] = tempCellsArray[i].slice();
-  //        for(var j=0; j< tempCellsArray.length; j++){
-  //            tempCellsArray[i][j] = Object.assign({},tempCellsArray[i][j]);
-  //        }
-  //    }
-   //
-  //    this.props.snakeQueue.map(function(snakeCell,index){
-  //      console.log("snake in "+snakeCell.row+","+snakeCell.col);
-  //      tempCellsArray[snakeCell.row][snakeCell.col].value = 1;
-  //    })
-   //
-  //    this.setState({cellsArray: tempCellsArray});
-  //  }
-
    componentWillReceiveProps(){
      //Copying cellsArray to tempCellsArray by value (not by reference) because state should be immutable
      //we cant directly  this.state.cellsArray[row][col].value = value; as this does not trigger a state change. Hence we do this.setState!
