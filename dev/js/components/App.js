@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
 import Board from './Board';
 require('../../css/stylesheet.css');
+// var dataURI = require('../../../HighScore.txt');   //this is when i use url-loader to load a file. It's contents are encoded in the url itself.
 var moment = require('moment');
+// var fileURL = require('../../../HighScore.txt');
 
 var snakeHash = [];
 var startTime = moment();
+
+//dataURI is of the form  data:text/plain;base64,MzENCg==  where  MzENCg== is the data encoded in base64. Thus, we  split the string by "," take the second element and decode it to get data. decoding is done using window.atob()
+// var highScore = window.atob(dataURI.split(",")[1]);
 
 class App extends Component{
 
@@ -15,6 +20,7 @@ class App extends Component{
     this.gameloop = this.gameloop.bind(this);
     this.spawnFood = this.spawnFood.bind(this);
     this.resetGame = this.resetGame.bind(this);
+    // this.readTextFile = this.readTextFile.bind(this);
     this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver: false};
   }
 
@@ -150,7 +156,7 @@ spawnFood(){
 }
 
 
-gameloop(){
+gameloop(){ //Asynchronous function to continuously move the snake. This should be async as we take keyboard inputs from the user parallely
   var that = this;
   setTimeout(function(){
     console.log("Moving snake "+that.state.direction);
@@ -168,6 +174,9 @@ gameloop(){
    var num = prompt("NxN Board. Enter N (eg. 25)");
    num = Number(num);
    this.setState({n:num});
+   if(localStorage.getItem("highScore")==null){
+       localStorage.setItem("highScore",2);
+   }
    this.gameloop();
  }
 
@@ -178,18 +187,42 @@ gameloop(){
     for(var i=0; i<this.state.snakeQueue.length; i++){
       snakeHash[`${this.state.snakeQueue[i].row},${this.state.snakeQueue[i].col}`]=true;
     }
+    // this.readTextFile();
   }
 
   resetGame(){
     console.log("reseting game");
-    snakeHash=[]
+    if(this.state.score>localStorage.getItem("highScore")){
+      localStorage.setItem("highScore",this.state.score);
+    }
+    snakeHash=[];
     this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver:false});
     startTime = moment();
     snakeHash["0,0"]= true;
     snakeHash["0,1"]= true;
+    // this.readTextFile();
     this.gameloop();
 
   }
+
+  // readTextFile()
+  // {
+  //     var rawFile = new XMLHttpRequest();
+  //     var that = this;
+  //     rawFile.open("GET", fileURL, true);
+  //     rawFile.onreadystatechange = function ()
+  //     {
+  //         if(rawFile.readyState === 4)
+  //         {
+  //             if(rawFile.status === 200 || rawFile.status == 0)
+  //             {
+  //                 var allText = rawFile.responseText;
+  //                 that.setState({highScore: allText});
+  //             }
+  //         }
+  //     }
+  //     rawFile.send(null);
+  // }
 
   render(){
     var d = moment(); //We store time the game started in  App scope var startTime. Then, in render, everytime we get current time and show diff of current time and start time!
@@ -201,6 +234,7 @@ gameloop(){
       <div id="app" ref="app" tabIndex="0" onKeyDown={this.handleKeyPress}>
         <button id="buttonRestart" onClick={this.resetGame}>Restart</button>
         <div id="score">Score: {this.state.score}</div>
+        <div id="highScore">HighScore: {localStorage.getItem("highScore")}</div>
         <div id="timer">{d.diff(startTime, 'seconds')}.{d.diff(startTime, 'milliseconds')%1000}sec</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
         <div id="gameOver" style={{display:(this.state.gameOver)?"block":"none"}}>Game Over</div>
