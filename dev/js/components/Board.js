@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Cell from './Cell';
 
 
-var cellsArray = [];//this is a global variable although it cannot be accessed directly from other files. Therefore it's life is throughtout the program. So, when Board is re-rendered, it does not lose its value, It retains it
+
 
 
 class Board extends Component{
@@ -10,6 +10,9 @@ class Board extends Component{
   constructor(props) {  //Constructor is not mandatory in an ES6 class. It is required only when you want to give inital state (getInitialState) or componentDidMount. I want too print value of n when Board mounts.
        super(props);  //Whenever there is a constructor, super is mandatory. Super gives 'this' the context
        //We use super(props) instead of super() whenever we want to use props inside the constructor.
+
+       this.cellsArray = []; //Instance variable
+
        console.log("Board dimension: "+ this.props.n);
        this.drawcell = this.drawCell.bind(this);
        this.getRows = this.getRows.bind(this);
@@ -23,7 +26,7 @@ class Board extends Component{
                             value: 0,  //value 0 = empty cell, 1 = snake, 2 = food
                           })
            }
-           cellsArray.push(rowArray);
+           this.cellsArray.push(rowArray);
          }
 
    }
@@ -45,17 +48,18 @@ class Board extends Component{
 
     for(var i = 0; i< this.props.n; i++){ //clean board. Need to paint snake and food
         for(var j =0; j<this.props.n; j++){
-          cellsArray[i][j].value = 0;
+          this.cellsArray[i][j].value = 0;
       }
     }
 
     if(typeof(this.props.food.row)!="undefined"){  //Adding this line because initially food is not present
-      cellsArray[this.props.food.row][this.props.food.col].value = 2;
+      this.cellsArray[this.props.food.row][this.props.food.col].value = 2;
     }
 
+    var that = this;
      this.props.snakeQueue.map(function(snakeCell,index){       //Rendering snake after food so that snake goes on top of food
       //  console.log("snake in "+snakeCell.row+","+snakeCell.col);
-       cellsArray[snakeCell.row][snakeCell.col].value = 1;   //When collision with boundary happens. this is where Error is thrown as there is no '.value' defined.
+       that.cellsArray[snakeCell.row][snakeCell.col].value = 1;   //When collision with boundary happens. this is where Error is thrown as there is no '.value' defined.
      })
 
    }
@@ -66,7 +70,7 @@ class Board extends Component{
         // console.log(this.lol);  //this is the instance variable declared in the constructor
         return(
           <div id="board" style={{height:`${30*this.props.n}px`, width:`${30*this.props.n}px`, left:`-${this.props.n*30/2}px`}}>
-            {cellsArray.map(this.getRows)}
+            {this.cellsArray.map(this.getRows)}
 
           </div>
         );

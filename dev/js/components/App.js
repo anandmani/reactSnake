@@ -5,9 +5,6 @@ require('../../css/stylesheet.css');
 var moment = require('moment');
 // var fileURL = require('../../../HighScore.txt');
 
-var snakeHash = [];
-var startTime = moment();
-
 //dataURI is of the form  data:text/plain;base64,MzENCg==  where  MzENCg== is the data encoded in base64. Thus, we  split the string by "," take the second element and decode it to get data. decoding is done using window.atob()
 // var highScore = window.atob(dataURI.split(",")[1]);
 
@@ -21,6 +18,8 @@ class App extends Component{
     this.spawnFood = this.spawnFood.bind(this);
     this.resetGame = this.resetGame.bind(this);
     // this.readTextFile = this.readTextFile.bind(this);
+    this.snakeHash = [];
+    this.startTime = moment();
     this.state = { snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:5, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver: false};
   }
 
@@ -99,7 +98,7 @@ moveSnake(){
     }
     else {
         var exTail = tempSnakeQueue.shift(); //Removing last element of queue
-        snakeHash[`${exTail.row},${exTail.col}`]=false;//Updating snake hash as well
+        this.snakeHash[`${exTail.row},${exTail.col}`]=false;//Updating snake hash as well
     }
 
 
@@ -125,7 +124,7 @@ moveSnake(){
 
     }
     //Check for collisions with snake body
-    if(snakeHash[`${head.row},${head.col}`]==true){
+    if(this.snakeHash[`${head.row},${head.col}`]==true){
       console.log('Collision with snake body!');
       this.setState({gameOver: true});
       throw new Error('Collision with snake body!');
@@ -138,7 +137,7 @@ moveSnake(){
     }
     //Updating Snake with new head
     tempSnakeQueue.push(head);
-    snakeHash[`${head.row},${head.col}`]=true;//Updating snake hash as well
+    this.snakeHash[`${head.row},${head.col}`]=true;//Updating snake hash as well
     this.setState({snakeQueue: tempSnakeQueue});
 }
 
@@ -146,7 +145,7 @@ spawnFood(){
     var foodRow = Math.floor((Math.random() * this.state.n)); //Random number between 0 and n-1
     var foodCol = Math.floor((Math.random() * this.state.n)); //Random number between 0 and n-1
     //Checking if snake is present at random location generated
-    while(snakeHash[`${foodRow},${foodCol}`]==true){
+    while(this.snakeHash[`${foodRow},${foodCol}`]==true){
       console.log("Snake present at random location generated for food. Generating new location");
       foodRow = Math.floor((Math.random() * this.state.n));
       foodCol = Math.floor((Math.random() * this.state.n));
@@ -183,9 +182,9 @@ gameloop(){ //Asynchronous function to continuously move the snake. This should 
   componentDidMount(){
     console.log("inside component did mount");
     this.refs.app.focus();
-    startTime = moment();
+    this.startTime = moment();
     for(var i=0; i<this.state.snakeQueue.length; i++){
-      snakeHash[`${this.state.snakeQueue[i].row},${this.state.snakeQueue[i].col}`]=true;
+      this.snakeHash[`${this.state.snakeQueue[i].row},${this.state.snakeQueue[i].col}`]=true;
     }
     // this.readTextFile();
   }
@@ -195,11 +194,11 @@ gameloop(){ //Asynchronous function to continuously move the snake. This should 
     if(this.state.score>localStorage.getItem("highScore")){
       localStorage.setItem("highScore",this.state.score);
     }
-    snakeHash=[];
+    this.snakeHash=[];
     this.setState({ snakeQueue: [ {row:0,col:0}, {row:0,col:1}  ], direction: "right", n:this.state.n, buttonPressed: false, foodPresent: false, food:{}, score: 2, gameOver:false});
-    startTime = moment();
-    snakeHash["0,0"]= true;
-    snakeHash["0,1"]= true;
+    this.startTime = moment();
+    this.snakeHash["0,0"]= true;
+    this.snakeHash["0,1"]= true;
     // this.readTextFile();
     this.gameloop();
 
@@ -225,17 +224,17 @@ gameloop(){ //Asynchronous function to continuously move the snake. This should 
   // }
 
   render(){
-    var d = moment(); //We store time the game started in  App scope var startTime. Then, in render, everytime we get current time and show diff of current time and start time!
+    var d = moment(); //We store time the game started in  instance var startTime. Then, in render, everytime we get current time and show diff of current time and start time!
     console.log("snake queue");
     console.log(this.state.snakeQueue);
     console.log("snake hash");
-    console.log(snakeHash);//this is kinda conk as console.log prints final state of snakeHash (reference)
+    console.log(this.snakeHash);//this is kinda conk as console.log prints final state of snakeHash (reference)
     return(
       <div id="app" ref="app" tabIndex="0" onKeyDown={this.handleKeyPress}>
         <button id="buttonRestart" onClick={this.resetGame}>Restart</button>
         <div id="score">Score: {this.state.score}</div>
         <div id="highScore">HighScore: {localStorage.getItem("highScore")}</div>
-        <div id="timer">{d.diff(startTime, 'seconds')}.{d.diff(startTime, 'milliseconds')%1000}sec</div>
+        <div id="timer">{d.diff(this.startTime, 'seconds')}.{d.diff(this.startTime, 'milliseconds')%1000}sec</div>
         <Board n={this.state.n} snakeQueue={this.state.snakeQueue} food={this.state.food}/>
         <div id="gameOver" style={{display:(this.state.gameOver)?"block":"none"}}>Game Over</div>
       </div>
