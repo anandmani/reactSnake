@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import Cell from './Cell';
 
+
+var cellsArray = [];//this is a global variable although it cannot be accessed directly from other files. Therefore it's life is throughtout the program. So, when Board is re-rendered, it does not lose its value, It retains it
+
+
 class Board extends Component{
 
   constructor(props) {  //Constructor is not mandatory in an ES6 class. It is required only when you want to give inital state (getInitialState) or componentDidMount. I want too print value of n when Board mounts.
@@ -9,9 +13,7 @@ class Board extends Component{
        console.log("Board dimension: "+ this.props.n);
        this.drawcell = this.drawCell.bind(this);
        this.getRows = this.getRows.bind(this);
-
-       var cellsArray = [];
-
+      //  this.lol  = 1;     //this is an instance variable. Use it when you dont need a variable to be a state and want it to be accessible throughout the class. It's value is retained between renders.
        for(var i = 0; i< this.props.n; i++){
            var rowArray = [];
            for(var j =0; j<this.props.n; j++){
@@ -23,7 +25,7 @@ class Board extends Component{
            }
            cellsArray.push(rowArray);
          }
-       this.state = { cellsArray: cellsArray };
+
    }
 
    drawCell(cellObj, index){
@@ -36,42 +38,35 @@ class Board extends Component{
       return rowArray.map(this.drawCell);
    }
 
-   componentWillReceiveProps(){
-     //Copying cellsArray to tempCellsArray by value (not by reference) because state should be immutable
-     //we cant directly  this.state.cellsArray[row][col].value = value; as this does not trigger a state change. Hence we do this.setState!
-    //  this.state.cellsArray[row][col].value = value;
-    //  this.setState({cellsArray: this.state.cellsArray})
-    //Note: cellsArray is an Array. We cant copy it with = as it is copied by reference. Thus we need to use spread. But, cellsArray is a 2D array. Therefore, spread alone is not enough as the rowArrays inside wll be copied by reference.
-    console.log("inside board");
-    // console.log(this.state.cellsArray);
-    console.log(this.props.snakeQueue);
-     var tempCellsArray = [...this.state.cellsArray];
-     for(var i =0; i< tempCellsArray.length; i++){
-         tempCellsArray[i] = tempCellsArray[i].slice();
-         for(var j=0; j< tempCellsArray.length; j++){
-             tempCellsArray[i][j] = Object.assign({},tempCellsArray[i][j],{value:0}); //Clearing board. Snake will be drawn fully again. But react's virtual dom will re-render only head and tail(if need be)
-         }
-     }
+   componentWillReceiveProps(){ //Tried refactoring this function further. Instead of whiping whole baord clean on every Props received, tried to clear only the ex tail. But we need to clear tail, food (and even whole snake when restart button is pressed). To many extra props have to be passed down to Board. Thus, sticking to this method.
 
-     if(typeof(this.props.food.row)!="undefined"){  //Adding this line because initially food is not present
-      tempCellsArray[this.props.food.row][this.props.food.col].value = 2;
+    console.log("inside board");
+    console.log(this.props.snakeQueue);
+
+    for(var i = 0; i< this.props.n; i++){ //clean board. Need to paint snake and food
+        for(var j =0; j<this.props.n; j++){
+          cellsArray[i][j].value = 0;
+      }
+    }
+
+    if(typeof(this.props.food.row)!="undefined"){  //Adding this line because initially food is not present
+      cellsArray[this.props.food.row][this.props.food.col].value = 2;
     }
 
      this.props.snakeQueue.map(function(snakeCell,index){       //Rendering snake after food so that snake goes on top of food
       //  console.log("snake in "+snakeCell.row+","+snakeCell.col);
-       tempCellsArray[snakeCell.row][snakeCell.col].value = 1;   //When collision with boundary happens. this is where Error is thrown as there is no '.value' defined.
+       cellsArray[snakeCell.row][snakeCell.col].value = 1;   //When collision with boundary happens. this is where Error is thrown as there is no '.value' defined.
      })
 
-
-
-     this.setState({cellsArray: tempCellsArray});
    }
 
    render(){
         console.log("rendering board");
+        // this.lol = this.lol+1
+        // console.log(this.lol);  //this is the instance variable declared in the constructor
         return(
           <div id="board" style={{height:`${30*this.props.n}px`, width:`${30*this.props.n}px`, left:`-${this.props.n*30/2}px`}}>
-            {this.state.cellsArray.map(this.getRows)}
+            {cellsArray.map(this.getRows)}
 
           </div>
         );

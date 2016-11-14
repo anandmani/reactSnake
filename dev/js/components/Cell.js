@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 class Cell extends Component{
+
   render(){
     var clr;
     switch(this.props.cellObj.value){
