@@ -13,7 +13,7 @@ class Board extends Component{
        console.log("Board dimension: "+ this.props.n);
        this.drawcell = this.drawCell.bind(this);
        this.getRows = this.getRows.bind(this);
-      //  this.lol  = 1;     //this is an instance variable. Use it when you dont need a variable to be a state and want it to be accessible throughout the class. It's value is retained between renders.
+      //  this.lol  = 1;     //this is an instance variable. Use it when you dont need a variable to be a state and want it to be accessible throughout the class. It's value is retained between renders. This is because a class object is not destroyed between renders! it's just sitting there passively without being rendered. Not to misunderstand. Just because this class sits in a different file, it gets destroyed. It's all one big code chunk just simply scattered.
        for(var i = 0; i< this.props.n; i++){
            var rowArray = [];
            for(var j =0; j<this.props.n; j++){
